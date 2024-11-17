@@ -1,12 +1,20 @@
 import { connectDB } from "@/lib/connection"; 
 import { NextResponse } from "next/server";
 
-export async function GET(){
+export async function GET(req){
   try{
+
+    const { searchParams } = new URL(req.url);
+    // const email = searchParams.get("email");
+    const email="dummy1@gmail.com"
+
+    if (!email) {
+      return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    }
 console.log("API CALL")
     const db= await connectDB();
-    const sql = " SELECT * FROM MOCKINTERVIEW"
-    const [post]=await db.query(sql);
+    const sql = " SELECT * FROM MOCKINTERVIEW where createdBy =? "
+    const [post]=await db.query(sql,[email]);
 
     return NextResponse.json(post)
 
