@@ -15,6 +15,9 @@ import React, { useState } from 'react'
 import { useRouter } from "next/navigation";
 import { NextResponse } from "next/server";
 import axios from "axios";
+import { useAppDispatch } from "@/lib/store/hooks";
+import { setInterviewData, setMockId, setQuestions } from "@/lib/store/slice/interviewSlice";
+import { useDispatch } from "react-redux";
 
 const AddNewInterview = ({createdBy}) => {
 
@@ -24,6 +27,7 @@ const AddNewInterview = ({createdBy}) => {
   const [jobExperience, setYearsExperience] = useState("");
   const [loading, setLoading] = useState(false);
   const router=useRouter();
+  const dispatch=useDispatch();
 
   const submitHandler=async(e)=>{
     try{
@@ -36,13 +40,21 @@ const AddNewInterview = ({createdBy}) => {
           'Content-Type': 'application/json',
         }
       });   
+
+      console.log(response)
           //  console.log("Response from server: ", response.data); 
-          const mockId=response.mockId;
+          const mockId=response?.data?.mockId;
+          // console.log("MOck id from server",mockId)
+          console.log(response?.data?.questions)
            setLoading(false)
            setOpenDialog(false)
-           router(`/interview/${mockId}`)
-
+           dispatch(setInterviewData({jobPosition,jobDescription,jobExperience}));
+           router.push(`/dashboard/interview/${mockId}`)
+           dispatch(setMockId(mockId))
+           dispatch(setQuestions(response?.data?.questions));
     }catch(error){
+      setLoading(false)
+      setOpenDialog(false)
       return NextResponse.json({
         success:false,
         message:"Error in submit add interview button"
