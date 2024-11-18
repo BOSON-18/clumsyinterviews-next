@@ -5,8 +5,8 @@ export async function GET(req){
   try{
 
     const { searchParams } = new URL(req.url);
-    // const email = searchParams.get("email");
-    const email="dummy1@gmail.com"
+    const email = searchParams.get("email");
+    // const email="dummy1@gmail.com"
 
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });

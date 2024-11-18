@@ -59,7 +59,7 @@ export async function POST(req) {
             return NextResponse.json({
                 success: false,
                 message: "Please provide all required details",
-                status: 400
+                status: 500
             });
         }
 

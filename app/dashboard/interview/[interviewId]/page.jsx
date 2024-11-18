@@ -1,10 +1,11 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { setQuestion } from '@/lib/store/slice/interviewSlice';
 import { Lightbulb, WebcamIcon } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Webcam from 'react-webcam'; // Ensure this library is installed
 const Interview = ({ params }) => {
   // const [interviewData, setInterviewData] = useState();
@@ -13,6 +14,7 @@ const Interview = ({ params }) => {
   const jobPosition=useSelector((state)=>state.interview.jobPosition);
   const jobDescription=useSelector((state)=>state.interview.jobDescription);
   const jobExperience=useSelector((state)=>state.interview.jobExperience);
+  const dispatch=useDispatch();
   
   
 
@@ -87,7 +89,7 @@ const Interview = ({ params }) => {
         <div className="flex justify-center items-center">
           <Link href={"/dashboard/interview/" + mockId+ "/start"}>
             {" "}
-            <Button>Start Interview</Button>
+            <Button onClick={()=>dispatch(setQuestion(0))}>Start Interview</Button>
           </Link>
         </div>
       </div>

@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { NextResponse } from "next/server";
 import axios from "axios";
 import { useAppDispatch } from "@/lib/store/hooks";
-import { setInterviewData, setMockId, setQuestions } from "@/lib/store/slice/interviewSlice";
+import { setInterviewData, setMockId, setQuestion, setQuestions } from "@/lib/store/slice/interviewSlice";
 import { useDispatch } from "react-redux";
 
 const AddNewInterview = ({createdBy}) => {
@@ -52,6 +52,7 @@ const AddNewInterview = ({createdBy}) => {
            router.push(`/dashboard/interview/${mockId}`)
            dispatch(setMockId(mockId))
            dispatch(setQuestions(response?.data?.questions));
+           dispatch(setQuestion(0))
     }catch(error){
       setLoading(false)
       setOpenDialog(false)

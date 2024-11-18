@@ -8,98 +8,113 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { setQuestion } from "@/lib/store/slice/interviewSlice";
 
 const QuestionsSection = () => {
-  //  console.log("Question section", questions);
-
-  const questions= useSelector((state)=>state.interview.questions);
-  const activeQuestionIndex=useSelector((state)=>state.interview.questionNo);
+  const dispatch = useDispatch();
+  const questions = useSelector((state) => state.interview.questions);
+  const activeQuestionIndex = useSelector((state) => state.interview.questionNo);
   const[index,setIndex]=useState(activeQuestionIndex);
-
-  useEffect(()=>{
-    setIndex(activeQuestionIndex)
-  },[activeQuestionIndex])
-
- const handleNextQuestion=()=>{
-  if (index < questions.length - 1) {
-    const newIndex = index + 1;
-    setIndex(newIndex);
-    dispatch(setQuestion(newIndex)); // update store
-  }
- }
- const handlePrevQuestion=()=>{
-  if (index >0) {
-    const newIndex = index - 1;
-    setIndex(newIndex);
-    dispatch(setQuestion(newIndex)); // update store
-  }
- }
+ 
+  useEffect(() => {
+    setIndex(activeQuestionIndex);
+  }, [activeQuestionIndex]);
   
 
-  const textToSpeach = (text) => {
-    if ("speechSynthesis" in window) {
-      const speech = new SpeechSynthesisUtterance(text);
+  // Correct out-of-bounds questionNo on refresh
+  useEffect(() => {
+    if (activeQuestionIndex >= questions.length || activeQuestionIndex < 0) {
+      dispatch(setQuestion(0)); // Reset to 0 if out of range
+    }
 
-      window.speechSynthesis.speak(speech);
-    } else {
-      alert("Sorry,Your Browser cannot speak :)");
+    textToSpeech(questions[activeQuestionIndex])
+  }, [activeQuestionIndex, questions.length, dispatch]);
+
+  // Navigate to next question
+  const handleNextQuestion = () => {
+    if (activeQuestionIndex < questions.length - 1) {
+      dispatch(setQuestion(activeQuestionIndex + 1));
+     
     }
   };
 
-  // console.log(activeQuestionIndex)
-  return (
-    questions && (
-      <div className="p-5 border rounded-lg my-10">
+  // Navigate to previous question
+  const handlePrevQuestion = () => {
+    if (activeQuestionIndex > 0) {
+      dispatch(setQuestion(activeQuestionIndex - 1));
      
- <div className="p-14  rounded-lg  overflow-hidden">
+    }
+  };
+
+  // Text-to-speech function
+  const textToSpeech = (text) => {
+    if ("speechSynthesis" in window) {
+      // Stop any ongoing speech
+      window.speechSynthesis.cancel();
+      
+      // Create a new utterance for the current question
+      const speech = new SpeechSynthesisUtterance(text);
+      
+      // Speak the new utterance
+      window.speechSynthesis.speak(speech);
+    } else {
+      alert("Sorry, your browser does not support speech synthesis.");
+    }
+  };
+  // Ensure questions are defined
+  if (!questions || questions.length === 0) {
+    return <div>No questions available.</div>;
+  }
+
+  return (
+    <div className="p-5 border rounded-lg my-10">
+      <div className="p-14 rounded-lg overflow-hidden">
         <Carousel>
           <CarouselContent className="mx-2 gap-2">
-            {questions &&
-              questions?.map((question, i) => (
-                <CarouselItem className={` w-1/2 bg-slate-300 rounded-full text-xs md:text-sm text-center ${
-                    activeQuestionIndex == i && "bg-purple-500 text-white"
-                  } `} key={i}>
-                  {" "}
-                
-                    Question #{i + 1}
-                  
-                </CarouselItem>
-              ))}
+            {questions.map((question, i) => (
+              <CarouselItem
+                key={i}
+                className={`w-1/2 bg-slate-300 rounded-full text-xs md:text-sm text-center ${
+                  activeQuestionIndex === index ? "bg-purple-500 text-white" : ""
+                }`}
+              >
+                Question #{index + 1}
+              </CarouselItem>
+            ))}
           </CarouselContent>
-          <CarouselPrevious activeQuestionIndex={activeQuestionIndex}  handleNextQuestion={handleNextQuestion} handlePrevQuestion={handlePrevQuestion}/>
-          <CarouselNext activeQuestionIndex={activeQuestionIndex}   handleNextQuestion={handleNextQuestion} handlePrevQuestion={handlePrevQuestion} />
+
+          {/* Disabled buttons based on question index */}
+          <CarouselPrevious
+            onClick={handlePrevQuestion}
+            disabled={activeQuestionIndex === 0}
+          />
+          <CarouselNext
+            onClick={handleNextQuestion}
+            disabled={activeQuestionIndex === questions.length - 1}
+          />
         </Carousel>
-        </div>
-
-        <h2 className="my-5 text-md md:text-lg ">
-          { questions[activeQuestionIndex]}
-        </h2>
-        <Volume2
-          className="cursor-pointer"
-          onClick={() => {
-            textToSpeach(
-              questions[activeQuestionIndex]
-            );
-          }}
-        />
-
-        <div className="border rounded-lg p-5 bg-blue-100 text-blue-500 mt-20">
-          <h2 className="flex gap-2 items-center">
-            <Lightbulb />
-            <strong>Note:</strong>
-          </h2>
-          <h2 className="text-sm text-blue-500 my-2">
-            Click On record Answer when you want to answer the question . At the
-            end of interview we will give you the feedback along with the
-            correct answer for each of question and your answer to compare it .
-            The ans are AI generated and hence you can compare the difference of
-            some key concept that you may have missed while answering.
-          </h2>
-        </div>
       </div>
-    )
+
+      <h2 className="my-5 text-md md:text-lg">
+        {questions[activeQuestionIndex]}
+      </h2>
+      <Volume2
+        className="cursor-pointer"
+        onClick={() => textToSpeech(questions[activeQuestionIndex])}
+      />
+
+      <div className="border rounded-lg p-5 bg-blue-100 text-blue-500 mt-20">
+        <h2 className="flex gap-2 items-center">
+          <Lightbulb />
+          <strong>Note:</strong>
+        </h2>
+        <p className="text-sm text-blue-500 my-2">
+          The microphone will remian active for 30 seconds.
+          Click on "Record Answer" when you want to answer the question. At the end of the interview, we will provide feedback and the correct answer for each question, allowing you to compare with your responses.
+        </p>
+      </div>
+    </div>
   );
 };
 
