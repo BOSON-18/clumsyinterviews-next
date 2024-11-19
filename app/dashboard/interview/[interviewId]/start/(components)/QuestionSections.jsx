@@ -22,16 +22,15 @@ const QuestionsSection = () => {
   }, [activeQuestionIndex]);
   
 
-  // Correct out-of-bounds questionNo on refresh
   useEffect(() => {
     if (activeQuestionIndex >= questions.length || activeQuestionIndex < 0) {
-      dispatch(setQuestion(0)); // Reset to 0 if out of range
+      dispatch(setQuestion(0)); 
     }
 
     textToSpeech(questions[activeQuestionIndex])
   }, [activeQuestionIndex, questions.length, dispatch]);
 
-  // Navigate to next question
+
   const handleNextQuestion = () => {
     if (activeQuestionIndex < questions.length - 1) {
       dispatch(setQuestion(activeQuestionIndex + 1));
@@ -39,7 +38,6 @@ const QuestionsSection = () => {
     }
   };
 
-  // Navigate to previous question
   const handlePrevQuestion = () => {
     if (activeQuestionIndex > 0) {
       dispatch(setQuestion(activeQuestionIndex - 1));
@@ -53,16 +51,15 @@ const QuestionsSection = () => {
       // Stop any ongoing speech
       window.speechSynthesis.cancel();
       
-      // Create a new utterance for the current question
       const speech = new SpeechSynthesisUtterance(text);
       
-      // Speak the new utterance
+      
       window.speechSynthesis.speak(speech);
     } else {
       alert("Sorry, your browser does not support speech synthesis.");
     }
   };
-  // Ensure questions are defined
+  
   if (!questions || questions.length === 0) {
     return <div>No questions available.</div>;
   }

@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 
 const Page = ({ params }) => {
   
-  const mockId = useSelector((state)=>state.interview.mockId)||params.mockId; // Use mockId from URL params
+  const mockId = useSelector((state)=>state.interview.mockId)||params.mockId; 
   
   const [feedbackList, setFeedbackList] = useState([]);
   const [averageRating, setAverageRating] = useState(0);
@@ -28,7 +28,7 @@ const Page = ({ params }) => {
         });
         console.log(response)
         setFeedbackList(response?.data);
-        calculateAverageRating(response?.data);  // Call avg rating with fetched data
+        calculateAverageRating(response?.data);  
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -37,7 +37,7 @@ const Page = ({ params }) => {
     if (mockId) {
       fetchData();
     }
-  }, [mockId]);  // Re-run when mockId from params changes
+  }, [mockId]);  //mockId in dependency list
 
   const calculateAverageRating = (feedbackData) => {
     let totalRating = 0;

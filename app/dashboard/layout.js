@@ -6,7 +6,6 @@ import { store } from "@/lib/store/store";
 import { persistStore } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 
-// Conditionally set storage for client-side and server-side
 const createNoopStorage = () => ({
   getItem: () => Promise.resolve(null),
   setItem: () => Promise.resolve(),

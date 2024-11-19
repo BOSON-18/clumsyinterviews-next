@@ -18,21 +18,21 @@ const RecordAnswerSection = () => {
   const mockId=useSelector((state)=>state.interview.mockId)
   const questions=useSelector((state)=>state.interview.questions)
 
-  // Timer for auto-stopping the recording after 30 seconds
+  // 30 sec setTImeOut
   useEffect(() => {
     let timer;
     if (isRecording) {
-      // Start a 30-second timer when recording starts
+      // 30 sc  setTimeout
       timer = setTimeout(() => {
         stopRecording();
       }, 30000); // 30 seconds
 
-      // Cleanup the timer if recording is stopped before 30 seconds
+      // umonunting
       return () => clearTimeout(timer);
     }
   }, [isRecording]);
 
-  // Check for Web Speech API support
+  // Can you browser speak?
   useEffect(() => {
     if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
       const SpeechRecognition =
@@ -47,7 +47,7 @@ const RecordAnswerSection = () => {
           const result = event.results[i];
           transcript += result[0].transcript;
         }
-        setUserAnswer(transcript); // Update the current user answer
+        setUserAnswer(transcript); 
       };
 
       speechRecognitionRef.current.onerror = (e) => {
@@ -56,11 +56,11 @@ const RecordAnswerSection = () => {
       };
     } else {
       console.warn("Web Speech API is not supported in this browser.");
-      // Optionally: Integrate third-party speech-to-text API fallback here
+//can use googleSpeechAPi ut paise maang rha hai T_T :(( ))
     }
   }, []);
 
-  // Start/Stop recording function
+
   const StartStopRecording = () => {
     if (isRecording) {
       stopRecording();
@@ -75,7 +75,7 @@ const RecordAnswerSection = () => {
       speechRecognitionRef.current.start();
     } else {
       alert("Speech-to-text is not supported in this browser.");
-      // Optionally call third-party API here if Web Speech API isn't available
+      //can call 3 party lekin pasias nhi hai :( )
     }
   };
 
@@ -84,10 +84,10 @@ const RecordAnswerSection = () => {
       speechRecognitionRef.current.stop();
     }
     setIsRecording(false);
-    saveAnswer(); // Save the answer when recording stops
+    saveAnswer(); 
   };
 
-  // Save the answer to Redux store based on the active question index
+ 
   const saveAnswer = async() => {
     if (userAnswer.trim().length > 0) {
       dispatch(setAns({ activeQuestionIndex, answer: userAnswer }));

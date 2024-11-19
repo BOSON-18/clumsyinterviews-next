@@ -80,11 +80,11 @@ export async function POST(req) {
                     The final structure of the response should be like question, correctAns, userAnswer, feedback, rating where userAnswer, feedback, and rating must be empty initially.
                 `;
 
-                // Generate the questions using chatSession
+                // Generate the questions using chatSession-> AI API call
                 const result = await retryRequest(() => chatSession.sendMessage(InputPrompt));
                 jsonMockResponse = result.response.text().replace(/```(json)?/g, "").trim();
 
-                // Attempt to parse the cleaned JSON response
+                // parseing object returned from ai response->[interviewQuestions:{}]
                 jsonMockResponse = JSON.parse(jsonMockResponse);
                 console.log("Generated Interview JSON:", jsonMockResponse);
 
@@ -95,7 +95,7 @@ export async function POST(req) {
                 `;
                 const [insertMockTable] = await db.query(query, [mockId, jobPosition, jobDescription, jobExperience, createdBy]);
 
-                // Insert each interview question into UserAnswer table
+                // Inserting  in table -> (likeFOrEach-> looing in object)
                 for (const item of jsonMockResponse.interviewQuestions) {
                     const { question, correctAns, userAnswer, feedback, rating } = item;
                     questions.push(question);
@@ -107,7 +107,7 @@ export async function POST(req) {
                     await db.query(answerQuery, [mockId, question, correctAns, userAnswer, feedback, rating]);
                 }
 
-                // If everything succeeds, break the loop
+                // chal gya swaha ha!!!!
                 break;
             } catch (error) {
                 console.error("Error generating interview questions:", error);
@@ -124,7 +124,7 @@ export async function POST(req) {
         // Final response
         return NextResponse.json({
             success: true,
-            message: "Interview created successfully",
+            message: "Interview created successfully T_T_T_T_T_T_T",
             data: jsonMockResponse,
             mockId: mockId,
             questions: questions

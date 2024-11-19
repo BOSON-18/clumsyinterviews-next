@@ -6,7 +6,7 @@ import { Lightbulb, WebcamIcon } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Webcam from 'react-webcam'; // Ensure this library is installed
+import Webcam from 'react-webcam'; 
 const Interview = ({ params }) => {
   // const [interviewData, setInterviewData] = useState();
   const [webCamEnabled, setWebCamEnabled] = useState(false);

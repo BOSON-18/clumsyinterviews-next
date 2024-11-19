@@ -91,7 +91,7 @@ const retryRequest = async (fn, retries = 3, delay = 1000) => {
 // }
 
 
-
+//per question feedback
 export async function POST(req){
 
     try{
@@ -136,14 +136,14 @@ export async function POST(req){
                   rating = VALUES(rating);
               `;
               const correctAns=getAnswer[0]?.correctAns
-            //   Update the array to include six values
+            
               const [submitFeedback] = await db.query(query, [
-                mockId,                          // for mockIdRef
-                question,                        // for question
-               correctAns,                       // for correctAns subquery (substitutes question)
-                jsonMockResponse?.userAnswer,    // for userAns
-                jsonMockResponse?.feedback,      // for feedback
-                jsonMockResponse?.rating         // for rating
+                mockId,                       
+                question,                        
+               correctAns,                       
+                jsonMockResponse?.userAnswer,   
+                jsonMockResponse?.feedback,    
+                jsonMockResponse?.rating         
               ]);
               
               

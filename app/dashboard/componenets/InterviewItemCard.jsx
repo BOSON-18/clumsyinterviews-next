@@ -16,15 +16,15 @@ const InterviewItemCard = ({ interview, user }) => {
       setLoading(true)
       console.log("Creating interview...");
 
-      // Prepare payload with user information and interview data
+     //payload->> data sent in req
       const payload = {
         jobPosition: interview?.jobPosition,
         jobDescription: interview?.jobDescription,
         jobExperience: interview?.jobExperience,
-        createdBy: user, // Ensure the user prop is correctly passed to this component
+        createdBy: user, 
       };
 
-      // Sending the API request to create an interview
+      // api calL 
       const response = await axios.post("/api/createInterview", payload, {
         headers: {
           "Content-Type": "application/json",
@@ -36,7 +36,7 @@ const InterviewItemCard = ({ interview, user }) => {
       const mockId = response?.data?.mockId;
       const questions = response?.data?.questions;
 
-      // Dispatch actions to update Redux state
+    // redux with persist
       dispatch(setInterviewData({
         jobPosition: interview?.jobPosition,
         jobDescription: interview?.jobDescription,
@@ -53,14 +53,14 @@ const InterviewItemCard = ({ interview, user }) => {
     } catch (error) {
         setLoading(false)
       console.error("Error in submit add interview button:", error);
-      // You can display an alert or handle the error more gracefully in the UI
+      
     }
   };
 
-  const onStart = () => {
-    router.push("/dashboard/interview/" + interview?.mockId);
-    // No need to call submitHandler here unless needed for a specific reason
-  };
+  // const onStart = () => {
+  //   router.push("/dashboard/interview/" + interview?.mockId);
+  //   
+  // };
 
   const onFeedbackPress = () => {
     router.push("dashboard/interview/" + interview.mockId + "/feedback");

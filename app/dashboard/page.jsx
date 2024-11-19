@@ -9,7 +9,7 @@ import InterviewList from "./componenets/InterviewList"
 const  Dashboard = () => {
 
   const user=  useUser();
-  // console.log(user)
+ 
 
   const email=user?.user?.primaryEmailAddress?.emailAddress;
 

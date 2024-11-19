@@ -11,13 +11,14 @@ const InterviewList = () => {
   const [error, setError] = useState(null);
 
   const { user } = useUser();
-  const email = user?.primaryEmailAddress?.emailAddress; // Retrieve email from `user`
+  const email = user?.primaryEmailAddress?.emailAddress; 
+  // console.log(email)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await apiClient.get(`/api/userInterviews`, {
-          params: { email }, // Use email as a query parameter
+          params: { email }, 
         });
 
         const data = response.data;
