@@ -96,7 +96,7 @@ const RecordAnswerSection = () => {
       if (userAnswer.trim().length > 0) {
         dispatch(setAns({ activeQuestionIndex, answer: userAnswer }));
         const question = activeQuestionIndex
-        const payload = { mockId, userAnswer, question: questions[question] }
+        const payload = { mockId, userAnswer, question: questions[question]?.question,questionId:questions[question]?.quesId }
         setLoading(true);
         const response = await axios.post("/api/submitInterview", payload, {
           headers: {

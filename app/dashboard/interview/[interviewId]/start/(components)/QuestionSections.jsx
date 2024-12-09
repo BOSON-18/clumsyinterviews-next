@@ -27,7 +27,7 @@ const QuestionsSection = () => {
       dispatch(setQuestion(0)); 
     }
 
-    textToSpeech(questions[activeQuestionIndex])
+    textToSpeech(questions[activeQuestionIndex]?.question)
   }, [activeQuestionIndex, questions.length, dispatch]);
 
 
@@ -94,11 +94,11 @@ const QuestionsSection = () => {
       </div>
 
       <h2 className="my-5 text-md md:text-lg">
-        {questions[activeQuestionIndex]}
+        {questions[activeQuestionIndex]?.question}
       </h2>
       <Volume2
         className="cursor-pointer"
-        onClick={() => textToSpeech(questions[activeQuestionIndex])}
+        onClick={() => textToSpeech(questions[activeQuestionIndex]?.question)}
       />
 
       <div className="border rounded-lg p-5 bg-blue-100 text-blue-500 mt-20">

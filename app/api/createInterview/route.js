@@ -96,15 +96,30 @@ export async function POST(req) {
                 const [insertMockTable] = await db.query(query, [mockId, jobPosition, jobDescription, jobExperience, createdBy]);
 
                 // Inserting  in table -> (likeFOrEach-> looing in object)
+                // for (const item of jsonMockResponse.interviewQuestions) {
+                //     const { question, correctAns, userAnswer, feedback, rating } = item;
+                //     questions.push(question);
+
+                //     const answerQuery = `
+                //         INSERT INTO UserAnswer(mockIdRef, question, correctAns, userAns, feedback, rating)
+                //         VALUES (?, ?, ?, ?, ?, ?)
+                //     `;
+                //     await db.query(answerQuery, [mockId, question, correctAns, userAnswer, feedback, rating]);
+                // }
+
                 for (const item of jsonMockResponse.interviewQuestions) {
                     const { question, correctAns, userAnswer, feedback, rating } = item;
-                    questions.push(question);
-
+                    
                     const answerQuery = `
-                        INSERT INTO UserAnswer(mockIdRef, question, correctAns, userAns, feedback, rating)
-                        VALUES (?, ?, ?, ?, ?, ?)
+                    INSERT INTO UserAnswer(mockIdRef, question, correctAns, userAns, feedback, rating)
+                    VALUES (?, ?, ?, ?, ?, ?)
                     `;
-                    await db.query(answerQuery, [mockId, question, correctAns, userAnswer, feedback, rating]);
+                    const [result] = await db.query(answerQuery, [mockId, question, correctAns, userAnswer, feedback, rating]);
+                    
+                    // Add the generated ID to the question object
+                    item.id = result.insertId;
+                    let quesId=item.id;
+                    questions.push({question,quesId});
                 }
 
                 // chal gya swaha ha!!!!

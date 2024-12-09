@@ -96,12 +96,12 @@ export async function POST(req){
 
     try{
         let jsonMockResponse
-        const{mockId,userAnswer,question}=await req.json();
+        const{mockId,userAnswer,question,questionId}=await req.json();
         const db= await connectDB();
 
-        console.log(userAnswer,mockId,question)
+        console.log(userAnswer,mockId,question,questionId)
 
-        if (!userAnswer || !mockId || !question) {
+        if (!userAnswer || !mockId || !question||!questionId) {
             return NextResponse.json({
                 success: false,
                 message: "Provide all fields",
@@ -124,13 +124,14 @@ export async function POST(req){
                 // Attempt to parse the cleaned JSON response
                 jsonMockResponse = JSON.parse(jsonMockResponse);
                 console.log("Generated Interview JSON:", jsonMockResponse);
-                const ansQuery = `SELECT correctAns FROM UserAnswer WHERE mockIdRef = ? AND question = ?`;
-                const[getAnswer]= await db.query(ansQuery,[mockId,question]);
+                const ansQuery = `SELECT correctAns FROM UserAnswer WHERE mockIdRef = ? AND id = ?`;
+                const[getAnswer]= await db.query(ansQuery,[mockId,questionId]);
                 console.log(getAnswer);
                 const query = `
-                INSERT INTO UserAnswer (mockIdRef, question, correctAns, userAns, feedback, rating)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO UserAnswer (id,mockIdRef, question, correctAns, userAns, feedback, rating)
+                VALUES (?,?, ?, ?, ?, ?, ?)
                 ON DUPLICATE KEY UPDATE
+               
                   userAns = VALUES(userAns),
                   feedback = VALUES(feedback),
                   rating = VALUES(rating);
@@ -138,10 +139,11 @@ export async function POST(req){
               const correctAns=getAnswer[0]?.correctAns
             
               const [submitFeedback] = await db.query(query, [
+                questionId,
                 mockId,                       
                 question,                        
                correctAns,                       
-                jsonMockResponse?.userAnswer,   
+                userAnswer,   
                 jsonMockResponse?.feedback,    
                 jsonMockResponse?.rating         
               ]);
@@ -158,7 +160,7 @@ export async function POST(req){
         console.error("Unexpected error:", error);
         return NextResponse.json({
             success: false,
-            message: "An unexpected error occurred while creating the interview",
+            message: "An unexpected error occurred while submiting  the answer",
             error: error.message
         }, { status: 500 });
     }
