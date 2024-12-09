@@ -26,7 +26,7 @@ const Page = ({ params }) => {
         const response = await axios.get("/api/feedback", {
           params: { mockId },
         });
-        console.log(response)
+        console.log("Feedback list api call",response)
         setFeedbackList(response?.data);
         calculateAverageRating(response?.data);  
       } catch (error) {

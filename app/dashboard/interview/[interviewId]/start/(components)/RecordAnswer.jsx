@@ -7,6 +7,7 @@ import { useUser } from "@clerk/nextjs";
 import { useDispatch, useSelector } from "react-redux";
 import { setAns, setFeedback, setRating } from "@/lib/store/slice/interviewSlice";
 import axios from "axios";
+import { useToast } from "@/hooks/use-toast";
 
 const RecordAnswerSection = () => {
   const [userAnswer, setUserAnswer] = useState(""); // To store the current answer
@@ -15,8 +16,9 @@ const RecordAnswerSection = () => {
   const speechRecognitionRef = useRef(null);
   const activeQuestionIndex = useSelector((state) => state.interview.questionNo); // Get current question index from Redux
   const dispatch = useDispatch();
-  const mockId=useSelector((state)=>state.interview.mockId)
-  const questions=useSelector((state)=>state.interview.questions)
+  const mockId = useSelector((state) => state.interview.mockId)
+  const questions = useSelector((state) => state.interview.questions)
+  const { toast } = useToast()
 
   // 30 sec setTImeOut
   useEffect(() => {
@@ -47,7 +49,7 @@ const RecordAnswerSection = () => {
           const result = event.results[i];
           transcript += result[0].transcript;
         }
-        setUserAnswer(transcript); 
+        setUserAnswer(transcript);
       };
 
       speechRecognitionRef.current.onerror = (e) => {
@@ -56,7 +58,7 @@ const RecordAnswerSection = () => {
       };
     } else {
       console.warn("Web Speech API is not supported in this browser.");
-//can use googleSpeechAPi ut paise maang rha hai T_T :(( ))
+      //can use googleSpeechAPi ut paise maang rha hai T_T :(( ))
     }
   }, []);
 
@@ -84,25 +86,42 @@ const RecordAnswerSection = () => {
       speechRecognitionRef.current.stop();
     }
     setIsRecording(false);
-    saveAnswer(); 
+    saveAnswer();
   };
 
- 
-  const saveAnswer = async() => {
-    if (userAnswer.trim().length > 0) {
-      dispatch(setAns({ activeQuestionIndex, answer: userAnswer }));
-      const question=activeQuestionIndex
-      const payload={mockId,userAnswer,question:questions[question]}
-      setLoading(true);
-      const response = await axios.post("/api/submitInterview", payload, {
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      }); 
-      console.log(response);  
-      dispatch(setRating({activeQuestionIndex:question,rating:response?.data?.response?.rating}));
-      dispatch(setFeedback({activeQuestionIndex:question,feedback:response?.data?.response?.feedback}));
-      console.log("Saving user answer:", userAnswer);
+
+  const saveAnswer = async () => {
+
+    try {
+      if (userAnswer.trim().length > 0) {
+        dispatch(setAns({ activeQuestionIndex, answer: userAnswer }));
+        const question = activeQuestionIndex
+        const payload = { mockId, userAnswer, question: questions[question] }
+        setLoading(true);
+        const response = await axios.post("/api/submitInterview", payload, {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        console.log(response);
+        dispatch(setRating({ activeQuestionIndex: question, rating: response?.data?.response?.rating }));
+        dispatch(setFeedback({ activeQuestionIndex: question, feedback: response?.data?.response?.feedback }));
+        console.log("Saving user answer:", userAnswer);
+        toast({
+          description: "Your answer has been saved.",
+        })
+        console.log("After toast")
+
+      }
+    } catch (error) {
+      console.log(error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+        // action: <ToastAction altText="Try again">Try again</ToastAction>,
+      })
+    } finally {
       setLoading(false)
     }
   };

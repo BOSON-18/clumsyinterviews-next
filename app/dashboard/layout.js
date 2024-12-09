@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import { store } from "@/lib/store/store";
 import { persistStore } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
+import { Toaster } from "@/components/ui/toaster";
 
 const createNoopStorage = () => ({
   getItem: () => Promise.resolve(null),
@@ -23,6 +24,7 @@ const DashboardLayout = ({ children }) => {
           <Header />
           <div className="mx-5 md:mx-20 lg:mx-36">
             {children}
+            <Toaster />
           </div>
         </div>
       </PersistGate>

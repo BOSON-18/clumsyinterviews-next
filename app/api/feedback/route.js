@@ -15,6 +15,7 @@ export async function GET(req) {
     const db = await connectDB();
     const sql = "SELECT * FROM UserAnswer WHERE mockIdRef = ?";
     const [post] = await db.query(sql, [mockId]);
+    console.log("feedback call api",[post])
 
     return NextResponse.json(post);
   } catch (error) {

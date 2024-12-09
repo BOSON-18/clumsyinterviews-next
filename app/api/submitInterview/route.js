@@ -147,7 +147,7 @@ export async function POST(req){
               ]);
               
               
-        // console.log(submitFeedback);
+        console.log("Per Question submit Feedback",[submitFeedback]);
                 return NextResponse.json({
                     success:true,
                     message:"Feedback Complete",
